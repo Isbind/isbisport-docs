@@ -1,0 +1,95 @@
+# gestion_donnees.py
+import json
+from datetime import datetime
+import os
+
+class GestionDonnees:
+    def __init__(self, fichier_donnees='donnees.json'):
+        self.fichier_donnees = fichier_donnees
+        self.charger_donnees()
+    
+    def charger_donnees(self):
+        if os.path.exists(self.fichier_donnees):
+            with open(self.fichier_donnees, 'r') as f:
+                self.donnees = json.load(f)
+        else:
+            self.donnees = {
+                'entrees': [],
+                'abonnements': [],
+                'depenses': []
+            }
+            self.sauvegarder_donnees()
+    
+    def sauvegarder_donnees(self):
+        with open(self.fichier_donnees, 'w') as f:
+            json.dump(self.donnees, f, indent=4)
+    
+    def ajouter_entree(self, date, nom_client, type_client, montant):
+        entree = {
+            'date': date,
+            'nom_client': nom_client,
+            'type_client': type_client,
+            'montant': montant
+        }
+        self.donnees['entrees'].append(entree)
+        self.sauvegarder_donnees()
+    
+    def ajouter_depense(self, date, type_depense, montant, description):
+        depense = {
+            'date': date,
+            'type': type_depense,
+            'montant': montant,
+            'description': description
+        }
+        self.donnees['depenses'].append(depense)
+        self.sauvegarder_donnees()
+    
+    def generer_rapport_mensuel(self, mois, annee):
+        entrees_mois = [
+            e for e in self.donnees['entrees']
+            if datetime.strptime(e['date'], '%Y-%m-%d').month == mois
+            and datetime.strptime(e['date'], '%Y-%m-%d').year == annee
+        ]
+        
+        depenses_mois = [
+            d for d in self.donnees['depenses']
+            if datetime.strptime(d['date'], '%Y-%m-%d').month == mois
+            and datetime.strptime(d['date'], '%Y-%m-%d').year == annee
+        ]
+        
+        total_entrees = sum(int(e['montant']) for e in entrees_mois)
+        total_depenses = sum(int(d['montant']) for d in depenses_mois)
+        
+        return {
+            'mois': mois,
+            'annee': annee,
+            'total_entrees': total_entrees,
+            'total_depenses': total_depenses,
+            'benefice': total_entrees - total_depenses,
+            'nombre_entrees': len(entrees_mois),
+            'nombre_depenses': len(depenses_mois)
+        }
+
+# Exemple d'utilisation
+if __name__ == "__main__":
+    gestion = GestionDonnees()
+    
+    # Exemple d'ajout d'entrée
+    gestion.ajouter_entree(
+        date='2025-12-08',
+        nom_client='Client Test',
+        type_client='ponctuel',
+        montant=5000
+    )
+    
+    # Exemple d'ajout de dépense
+    gestion.ajouter_depense(
+        date='2025-12-08',
+        type_depense='electricite',
+        montant=50000,
+        description='Facture d\'électricité'
+    )
+    
+    # Générer un rapport
+    rapport = gestion.generer_rapport_mensuel(mois=12, annee=2025)
+    print("Rapport du mois :", rapport)
