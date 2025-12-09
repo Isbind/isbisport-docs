@@ -1,0 +1,148 @@
+<!-- formulaire_saisie.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ISBISPORT - Saisie des Données</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 8px; margin-bottom: 10px; }
+        button { padding: 10px 15px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background: #45a049; }
+    </style>
+</head>
+<body>
+    <h2>Saisie des Données ISBISPORT</h2>
+    <form id="saisieForm">
+        <div class="form-group">
+            <label for="date">Date :</label>
+            <input type="date" id="date" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="type">Type d'opération :</label>
+            <select id="type" required>
+                <option value="entree">Entrée séance</option>
+                <option value="abonnement">Abonnement</option>
+                <option value="depense">Dépense</option>
+            </select>
+        </div>
+
+        <div id="detailsEntree" class="form-group">
+            <label for="nomClient">Nom du client :</label>
+            <input type="text" id="nomClient">
+            
+            <label for="typeClient">Type de client :</label>
+            <select id="typeClient">
+                <option value="abonne">Abonné</option>
+                <option value="ponctuel">Séance ponctuelle</option>
+            </select>
+            
+            <label for="montant">Montant (FCFA) :</label>
+            <input type="number" id="montant">
+        </div>
+
+        <div id="detailsDepense" class="form-group" style="display: none;">
+            <label for="typeDepense">Type de dépense :</label>
+            <select id="typeDepense">
+                <option value="electricite">Électricité</option>
+                <option value="entretien">Entretien</option>
+                <option value="salaire">Salaire</option>
+                <option value="autre">Autre</option>
+            </select>
+            
+            <label for="montantDepense">Montant (FCFA) :</label>
+            <input type="number" id="montantDepense">
+            
+            <label for="description">Description :</label>
+            <textarea id="description" rows="3" style="width: 100%;"></textarea>
+        </div>
+
+        <button type="submit">Enregistrer</button>
+    </form>
+
+    <script>
+        // Afficher/masquer les champs selon le type d'opération
+        document.getElementById('type').addEventListener('change', function() {
+            const type = this.value;
+            document.getElementById('detailsEntree').style.display = 
+                (type === 'entree' || type === 'abonnement') ? 'block' : 'none';
+            document.getElementById('detailsDepense').style.display = 
+                type === 'depense' ? 'block' : 'none';
+        });
+
+        // Gestion de la soumission du formulaire
+        document.getElementById('saisieForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Ici, vous pourriez ajouter le code pour enregistrer les données
+            alert('Données enregistrées avec succès !');
+            this.reset();
+        });
+    </script>
+</body>
+</html>
+2. Ensuite, créons un tableau de bord simple :
+html
+<!-- tableau_de_bord.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ISBISPORT - Tableau de Bord</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .card { background: #f9f9f9; padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .chart-container { margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1>Tableau de Bord ISBISPORT</h1>
+    
+    <div class="dashboard">
+        <div class="card">
+            <h3>Chiffre d'Affaires du Mois</h3>
+            <h2>0 FCFA</h2>
+        </div>
+        <div class="card">
+            <h3>Dépenses du Mois</h3>
+            <h2>0 FCFA</h2>
+        </div>
+        <div class="card">
+            <h3>Bénéfice Net</h3>
+            <h2>0 FCFA</h2>
+        </div>
+    </div>
+
+    <div class="chart-container" style="width: 80%; margin: 0 auto;">
+        <canvas id="frequentationChart"></canvas>
+    </div>
+
+    <script>
+        // Données factices pour l'exemple
+        const ctx = document.getElementById('frequentationChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
+                datasets: [{
+                    label: 'Fréquentation mensuelle',
+                    data: [120, 190, 150, 200, 180, 210, 250, 230, 200, 220, 210, 230],
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Fréquentation Mensuelle'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
